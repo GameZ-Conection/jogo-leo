@@ -155,7 +155,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         const randomEvent = events[Math.floor(Math.random() * events.length)];
         return randomEvent;
       });
-    }, 20000); // 20 segundos
+    }, 10000); // 20 segundos
 
     return () => clearInterval(interval);
   }, [events]);

@@ -7,7 +7,7 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col items-center justify-center h-screen bg-slate-900 text-slate-100">
-      <h1 className="text-5xl font-bold mb-8">🏭 Tycoon — Fábricas</h1>
+      <h1 className="text-5xl font-bold mb-8">🏭 GameZ — Fábricas</h1>
 
       <div className="flex flex-col gap-4">
         <button

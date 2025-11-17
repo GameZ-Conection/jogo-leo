@@ -18,7 +18,7 @@ export default function GamePage() {
                     {/* Conteúdo principal */}
                     <div className="flex-1 p-6 ml-72 transition-all">
                         <header className="mb-6">
-                            <h1 className="text-3xl font-bold mb-1">🏭 Tycoon — Fábricas</h1>
+                            <h1 className="text-3xl font-bold mb-1">🏭 GameZ — Fábricas</h1>
                             <p className="text-slate-400">
                                 Construa, pesquise e mantenha sua moral em alta!
                             </p>
