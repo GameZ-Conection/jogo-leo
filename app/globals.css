@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Suas variáveis globais e overrides */
+:root {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #f8fafc;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: theme('fontFamily.sans');
+  min-height: 100vh;
+}
+
+
+.pixel-font {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.pixel-input {
+  font-family: 'Press Start 2P';
+  image-rendering: pixelated;
+}
+
+
+/* Modal de bonus */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn .3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn .3s ease-out;
+}
