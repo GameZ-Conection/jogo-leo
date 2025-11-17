@@ -99,7 +99,7 @@ export default function ConfigPage() {
 
 
     return (
-        <main className="p-6 max-w-4xl mx-auto space-y-6 text-slate-100 relative">
+        <main className="p-6 max-w-4xl mx-auto space-y-6 text-slate-100 relative ">
             <button
                 onClick={() => router.push('/')}
                 className="absolute top-4 left-4 bg-slate-700 hover:bg-slate-600 p-3 rounded-full"

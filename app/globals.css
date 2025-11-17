@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Suas variáveis globais e overrides */
-:root {
+/* :root {
   --background: #0f172a;
   --foreground: #e2e8f0;
 }
@@ -18,7 +18,7 @@ body {
   color: var(--foreground);
   font-family: theme('fontFamily.sans');
   min-height: 100vh;
-}
+} */
 
 
 .pixel-font {

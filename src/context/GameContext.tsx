@@ -9,6 +9,8 @@ import {
   RESEARCH,
 } from '../lib/constants';
 import type { CellData, Color, GameEvent, Player } from '../types';
+import { useRouter } from 'next/navigation';
+
 
 interface ResearchLevels {
   green: number;
@@ -78,6 +80,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const [history, setHistory] = useState<GameContextValue["history"]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -155,7 +159,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         const randomEvent = events[Math.floor(Math.random() * events.length)];
         return randomEvent;
       });
-    }, 10000); // 20 segundos
+    }, 10000); // 10 segundos
 
     return () => clearInterval(interval);
   }, [events]);
@@ -206,8 +210,17 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setEvents((prev) => {
       const updated = prev.filter((ev) => ev.id !== currentEvent.id);
       localStorage.setItem('game_events', JSON.stringify(updated));
+
+      // ✔️ Se NÃO houver mais eventos, vai direto para o relatório
+      if (updated.length === 0) {
+        setTimeout(() => {
+          router.push('/game/report');
+        }, 500); // delayzinho pra UX ficar suave
+      }
+
       return updated;
     });
+
 
     setCurrentEvent(null);
   };
