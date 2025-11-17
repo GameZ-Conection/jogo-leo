@@ -2,7 +2,7 @@
 import React from 'react';
 import { useMenu } from '@/src/context/MenuContext';
 import { useGame } from '@/src/context/GameContext';
-import { COSTS, FACTORY_IMAGES, RESEARCH } from '@/src/lib/constants';
+import { COSTS, FACTORY_IMAGES, RESEARCH, RESEARCH_IMAGES } from '@/src/lib/constants';
 
 export default function DynamicMenuContent() {
     const { activeTab } = useMenu();
@@ -34,11 +34,12 @@ export default function DynamicMenuContent() {
                                 disabled={!affordable}
                                 className={`capitalize text-white rounded-lg py-2 px-4 flex flex-col items-center transition ${colorClass} ${!affordable ? 'opacity-50 cursor-not-allowed' : ''
                                     }`}
+                                style={{ width: '140px', height: '112px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
                             >
                                 <span className="font-medium"> <img
                                     src={FACTORY_IMAGES[color]}
                                     alt={`Fábrica ${color}`}
-                                    className="w-12 h-12 object-contain drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+                                    className="w-20 h-14 object-contain drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
                                 /></span>
                                 <span className="text-xs text-slate-200">
                                     ${cost.money} / ⏳{cost.time} / 💙{cost.morale}
@@ -82,9 +83,15 @@ export default function DynamicMenuContent() {
                                 disabled={!affordable}
                                 className={`capitalize text-white rounded-lg py-2 px-4 flex flex-col items-center transition ${colorClass} ${!affordable ? 'opacity-50 cursor-not-allowed' : ''
                                     }`}
+                                style={{ width: '140px', height: '112px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+
                             >
-                                <span className="font-medium">
-                                    {color} — Nível {lvl}
+                                <span className="font-medium flex flex-col items-center">
+                                    <img
+                                        src={RESEARCH_IMAGES[color]}
+                                        alt={color}
+                                        className="w-14 h-14 object-contain"
+                                    />Nível {lvl}
                                 </span>
                                 <span className="text-xs text-slate-200">
                                     ${cost.money} / ⏳{cost.time} / 💙{cost.morale}

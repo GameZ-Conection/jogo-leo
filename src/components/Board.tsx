@@ -13,7 +13,7 @@ export default function Board() {
     <section
       className="p-4 rounded-xl border border-slate-700 flex flex-col items-center overflow-hidden"
       style={{
-        backgroundImage: "url('/map/background_map11.png')",
+        backgroundImage: "url('/map/background_map111.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         perspective: "1200px",

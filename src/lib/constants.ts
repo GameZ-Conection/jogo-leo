@@ -14,6 +14,12 @@ export const FACTORY_IMAGES = {
   blue: '/images/factory-blue1-removebg-preview.png',
 };
 
+export const RESEARCH_IMAGES = {
+  green: '/icon-pesquisa/icon-pesquisa-verde-removebg-preview.png',
+  red: '/icon-pesquisa/icon-pesquisa-vermelha-removebg-preview.png',
+  blue: '/icon-pesquisa/icon-pesquisa-roxo-removebg-preview.png',
+}
+
 export const START_RESOURCES = {
   money: 100,
   time: 50,
