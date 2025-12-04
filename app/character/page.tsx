@@ -34,19 +34,21 @@ export default function CharacterCreationPage() {
             avatar: CHARACTERS[selected],
             name,
             surname,
-            age,
+            age: Number(age),
             description,
         };
 
         // 🔍 verifica palavras-chave
         const descLower = description.toLowerCase();
-        const bonuses = [];
+
+        const bonuses: { money?: number; time?: number; morale?: number }[] = [];
 
         KEYWORD_BONUSES.forEach(({ word, bonus }) => {
             if (descLower.includes(word)) {
                 bonuses.push(bonus);
             }
         });
+
 
 
         // aplica bônus

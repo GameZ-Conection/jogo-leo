@@ -50,6 +50,8 @@ interface GameContextValue {
 
   player: Player | null;
   setPlayer: (p: Player) => void;
+
+  applyBonus: (bonusList: any[]) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
