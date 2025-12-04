@@ -11,6 +11,7 @@ import {
 } from '../lib/constants';
 import type { CellData, Color, GameEvent, Player } from '../types';
 import { useRouter } from 'next/navigation';
+import { saveGameSession } from "@/src/server/saveSession";
 
 interface ResearchLevels {
   green: number;
@@ -160,7 +161,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         const randomEvent = events[Math.floor(Math.random() * events.length)];
         try {
           showToast?.(`Evento: ${randomEvent.title}`, 'info');
-        } catch {}
+        } catch { }
         return randomEvent;
       });
     }, 10000); // 10 segundos
@@ -190,44 +191,64 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(interval);
   }, [board, research]);
 
-  const chooseOption = (choiceId: number) => {
+  const chooseOption = async (choiceId: number) => {
     if (!currentEvent) return;
     const choice = currentEvent.choices.find((c) => c.id === choiceId);
     if (!choice) return;
 
-    // registra histórico
-    setHistory(prev => [
-      ...prev,
-      {
-        eventId: currentEvent.id,
-        eventTitle: currentEvent.title,
-        choiceText: choice.text,
-        moraleChange: choice.moraleChange,
-        timeChange: choice.timeChange
-      }
-    ]);
+    // 📌 Registrar o histórico da escolha
+    const newEntry = {
+      eventId: currentEvent.id,
+      eventTitle: currentEvent.title,
+      choiceText: choice.text,
+      moraleChange: choice.moraleChange,
+      timeChange: choice.timeChange,
+    };
 
+    setHistory(prev => [...prev, newEntry]);
 
+    // 📌 Atualizar recursos
     setMorale((m) => Math.max(0, Math.min(100, m + choice.moraleChange)));
     setTime((t) => Math.max(0, Math.min(100, t + choice.timeChange)));
 
-    setEvents((prev) => {
-      const updated = prev.filter((ev) => ev.id !== currentEvent.id);
-      localStorage.setItem('game_events', JSON.stringify(updated));
+    // 📌 Remover evento da lista (SEM async!)
+    const updatedEvents = events.filter(ev => ev.id !== currentEvent.id);
 
-      // ✔️ Se NÃO houver mais eventos, vai direto para o relatório
-      if (updated.length === 0) {
-        setTimeout(() => {
-          router.push('/game/report');
-        }, 500); // delayzinho pra UX ficar suave
+    setEvents(updatedEvents);
+    localStorage.setItem("game_events", JSON.stringify(updatedEvents));
+
+    // 👉 Agora SIM podemos verificar async
+    if (updatedEvents.length === 0) {
+      try {
+        const sessionId = await saveGameSession({
+          player,
+          finalScore: calculateScore([...history, newEntry]),
+          money,
+          board,
+          research,
+          history: [...history, newEntry],
+        });
+
+        console.log("Sessão salva no Supabase:", sessionId);
+
+      } catch (err) {
+        console.error("Erro ao salvar sessão no Supabase:", err);
       }
 
-      return updated;
-    });
+      setTimeout(() => {
+        router.push("/game/report");
+      }, 500);
+    }
 
+    // Limpar modal
     setCurrentEvent(null);
-    try { showToast?.('Opção escolhida', 'info'); } catch {}
+
+    try {
+      showToast?.("Opção escolhida", "info");
+    } catch { }
   };
+
+
 
 
 
@@ -255,7 +276,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       return copy;
     });
     setPendingPlacement(null);
-    try { showToast?.('Fábrica posicionada', 'success'); } catch {}
+    try { showToast?.('Fábrica posicionada', 'success'); } catch { }
   };
 
   // ✅ compra de pesquisa
@@ -306,7 +327,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       time: newTime,
       morale: newMorale,
     }));
-    try { showToast?.('Bônus aplicado', 'success'); } catch {}
+    try { showToast?.('Bônus aplicado', 'success'); } catch { }
   };
 
   function calculateScore(history: any[]) {
