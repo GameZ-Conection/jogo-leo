@@ -47,6 +47,9 @@ interface GameContextValue {
   isLoaded: boolean;
   score: number;
   resetHistory: () => void;
+
+  player: Player | null;
+  setPlayer: (p: Player) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
