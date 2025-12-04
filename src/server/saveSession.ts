@@ -16,26 +16,54 @@ export async function saveGameSession({
     history: any[];
 }) {
 
-    // 1) cria / garante player
-    const { data: playerData, error: playerError } = await supabase
+    // ----------------------------------------------------
+    // 1) Identificar o usuário logado
+    // ----------------------------------------------------
+    const { data: authData } = await supabase.auth.getUser();
+    const user = authData?.user;
+
+    if (!user) {
+        throw new Error("Usuário não autenticado, não é possível salvar a sessão.");
+    }
+
+    // ----------------------------------------------------
+    // 2) Verificar se ESTE usuário já tem um player
+    // ----------------------------------------------------
+    const { data: existingPlayer } = await supabase
         .from("players")
-        .insert({
-            name: player.name,
-            surname: player.surname,
-            age: player.age,
-            description: player.description,
-            avatar_url: player.avatar,
-        })
-        .select()
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
-    if (playerError) throw playerError;
+    let playerId = existingPlayer?.id;
 
-    // 2) cria session
+    // Se não tiver player, cria um novo
+    if (!playerId) {
+        const { data: newPlayer, error: playerError } = await supabase
+            .from("players")
+            .insert({
+                user_id: user.id,
+                name: player.name,
+                surname: player.surname,
+                age: player.age,
+                description: player.description,
+                avatar_url: player.avatar,
+            })
+            .select()
+            .single();
+
+        if (playerError) throw playerError;
+        playerId = newPlayer.id;
+    }
+
+    // ----------------------------------------------------
+    // 3) Criar sessão do jogo
+    // ----------------------------------------------------
     const { data: sessionData, error: sessionError } = await supabase
         .from("game_sessions")
         .insert({
-            player_id: playerData.id,
+            user_id: user.id,
+            player_id: playerId,
             final_score: finalScore,
             final_money: money,
         })
@@ -44,31 +72,41 @@ export async function saveGameSession({
 
     if (sessionError) throw sessionError;
 
-    // 3) salva research levels
+    const sessionId = sessionData.id;
+
+    // ----------------------------------------------------
+    // 4) Salvar research
+    // ----------------------------------------------------
     await supabase.from("research_levels").insert({
-        session_id: sessionData.id,
+        session_id: sessionId,
         green: research.green,
         red: research.red,
         blue: research.blue,
     });
 
-    // 4) salva board.json
+    // ----------------------------------------------------
+    // 5) Salvar board como JSON
+    // ----------------------------------------------------
     await supabase.from("board_cells").insert({
-        session_id: sessionData.id,
+        session_id: sessionId,
         board,
     });
 
-    // 5) salva histórico de eventos
-    const historyRows = history.map((h) => ({
-        session_id: sessionData.id,
-        event_id: h.eventId,
-        event_title: h.eventTitle,
-        choice_text: h.choiceText,
-        morale_change: h.moraleChange,
-        time_change: h.timeChange,
-    }));
+    // ----------------------------------------------------
+    // 6) Salvar histórico de eventos
+    // ----------------------------------------------------
+    if (history.length > 0) {
+        const historyRows = history.map((h) => ({
+            session_id: sessionId,
+            event_id: h.eventId,
+            event_title: h.eventTitle,
+            choice_text: h.choiceText,
+            morale_change: h.moraleChange,
+            time_change: h.timeChange,
+        }));
 
-    await supabase.from("event_history").insert(historyRows);
+        await supabase.from("event_history").insert(historyRows);
+    }
 
-    return sessionData.id;
+    return sessionId;
 }
