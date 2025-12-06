@@ -26,8 +26,6 @@ export default function Board() {
           paddingBottom: "6rem",
         }}>
 
-        <h2 className="text-xl font-semibold mb-4 text-slate-100">Tabuleiro</h2>
-
         <div
           className="grid justify-center"
           style={{
